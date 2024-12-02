@@ -74,34 +74,36 @@ pub fn part2(input: String) -> Int {
       }
     })
 
-  recurse_part2(left_list, right_list, dict.new(), [])
+  recurse_part2(left_list, right_list, dict.new(), 0)
 }
 
 fn recurse_part2(
   l1: List(Int),
   l2: List(Int),
   calculated: dict.Dict(Int, Int),
-  acc: List(Int),
+  acc: Int,
 ) -> Int {
   case l1 {
     [i, ..rest] -> {
       case dict.get(calculated, i) {
         Ok(pre_calc) -> {
-          recurse_part2(rest, l2, calculated, [pre_calc, ..acc])
+          recurse_part2(rest, l2, calculated, pre_calc + acc)
         }
         Error(_) -> {
           let count =
             l2
             |> list.filter(fn(val) { val == i })
             |> list.length()
-          recurse_part2(rest, l2, dict.insert(calculated, i, i * count), [
-            i * count,
-            ..acc
-          ])
+          recurse_part2(
+            rest,
+            l2,
+            dict.insert(calculated, i, i * count),
+            i * count + acc,
+          )
         }
       }
     }
-    _ -> int.sum(acc)
+    _ -> acc
   }
 }
 
